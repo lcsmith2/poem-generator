@@ -1,16 +1,22 @@
+"""
+"""
 from poem import Poem
 import random
 
 class Population:
     """This class represents a population of Poem objects."""
     
-    def __init__(self, population_size=10):
+    def __init__(self, population_size):
+        """
+        """
         self.poems = []
         self.population_size = population_size
         for i in range(population_size):
             self.poems.append(Poem())
 
     def recombine(self, poem1, poem2):
+        """
+        """
         child1_lines = []
         child2_lines = []
         for i in range(len(poem1.lines)):
@@ -23,6 +29,8 @@ class Population:
         return (Poem(child1_lines), Poem(child2_lines))
 
     def rank_selection(self):
+        """
+        """
         total_weight = (self.population_size * (self.population_size + 1)) / 2.0
         index = 0
         r = random.random() * total_weight
@@ -35,6 +43,7 @@ class Population:
         return index
     
     def sort_population(self):
+        """Sorts the population in ascending order by fitness."""
         self.poems.sort(key=lambda poem: poem.get_fitness())
 
     def __str__(self):
@@ -48,5 +57,5 @@ class Population:
         """Returns a printable representation of the population."""
         result = ""
         for poem in self.poems:
-            result += str(poem) + "\n\n"
+            result += repr(poem) + "\n\n"
         return result
