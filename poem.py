@@ -2,7 +2,7 @@
 """
 import random
 import cmudict
-from article import get_polarity_count
+from article import get_polarity_scores
 
 class Poem:
     """ This class represents a poem. """
@@ -16,7 +16,7 @@ class Poem:
     NUMBER_OF_LINES = 5
     MUTATION_PROB = 0.25
     MAX_NUM_RETRIES = 100
-    POLARITY_WEIGHT = 0.2
+    POLARITY_WEIGHT = 0.4
     NUM_SYLLABLES = [2, 4, 6, 8, 2]
     TEMPLATE = [
             [["NN"], ["VBN"], ["NNS"], ["NNP"]], 
@@ -116,13 +116,8 @@ class Poem:
             line_i_doc = self.docs[self.lines[i]]
             score += line_i_doc.similarity(Poem.search_term_doc)
         self.fitness = score / len(self.lines)
-        polarity_count = get_polarity_count(" ".join(self.lines))
-        polarity_fitness = polarity_count["positive"] / \
-            max(polarity_count["negative"], 1)
-        if Poem.polarity == "negative":
-            polarity_fitness = polarity_count["negative"] / \
-                max(polarity_count["positive"], 1)
-        self.fitness += polarity_fitness * Poem.POLARITY_WEIGHT
+        polarity_score = get_polarity_scores(" ".join(self.lines))
+        self.fitness += polarity_score[Poem.polarity] * Poem.POLARITY_WEIGHT
         return self.fitness
 
     def mutate(self):

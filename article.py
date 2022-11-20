@@ -1,30 +1,24 @@
 """
 This module uses the Guardian API to find an article relating to a given 
-search term with polarity positive or negative.
+search term with a positive or negative polarity.
 """
 
 from api_keys import GUARDIAN_API_KEY
 import requests
-import lexicons
-import collections
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 BASE_REQUEST_STRING = "https://content.guardianapis.com/search"
+sentiment_anlyzer = SentimentIntensityAnalyzer()
 
-def get_polarity_count(input):
+def get_polarity_scores(input):
     """
-    Returns a dictionary containing the number positive and negative words
-    input contains according to the NRC Emotion Lexicon.
+    Returns a dictionary containing pos, neg, neu, and compound scores for
+    the input text using VADER's sentiment analyzer.
     Args:
         input (str): the input string containing the words to be counted
     """
-    polarity_lexicon = lexicons.get_polarity_lexicon()
-    polarity_counts = collections.defaultdict(int)
-    words = input.split()
-    for word in words:
-        word = word.lower().strip()
-        if word in polarity_lexicon:
-            polarity_counts[polarity_lexicon[word]] += 1
-    return polarity_counts
+    sentiment_dict = sentiment_anlyzer.polarity_scores(input)
+    return sentiment_dict
 
 def get_article_for_term(search_term, polarity):
     """
@@ -45,8 +39,7 @@ def get_article_for_term(search_term, polarity):
         article = result["fields"]["bodyText"]
         if not article:
             continue
-        articles.append((article, get_polarity_count(article)))
+        articles.append((article, get_polarity_scores(article)))
   
-    articles.sort(key=lambda x: x[1]["positive"] / max(x[1]["negative"], 1), 
-        reverse=polarity=="positive")
+    articles.sort(key=lambda x: x[1][polarity], reverse=True)
     return articles[0][0]
