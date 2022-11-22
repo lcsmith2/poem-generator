@@ -19,7 +19,7 @@ class Poem:
     line have 2, 4, 6, 8, 2 syllables respectively.
     """
     phrase_docs = {}
-    frequency_map = {}
+    next_word_map = {}
     tag_map = {}
     search_term_doc = None
     polarity = ""
@@ -84,7 +84,7 @@ class Poem:
         """
         if last_added_word:
             candidates = []
-            for word in Poem.frequency_map[last_added_word]:
+            for word in Poem.next_word_map[last_added_word]:
                 if word.tag_ == tag:
                     candidates.append(word.text)
             if candidates:

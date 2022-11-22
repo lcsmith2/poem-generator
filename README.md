@@ -1,6 +1,8 @@
 # CSCI 3725: M6
 ## Quaint Poet
-Quaint Poet is a system that generates cinquain poems that relate to a given prompt and polarity. Given a search term, it uses the Guardian API to find articles related to that term and uses the one with highest proportion of text with the desired polarity (positive or negative) as the corpus of words for the poems. Each poem's line is generated according to bigrams and a template of Penn Treebank part-of-speech tags. The system uses a genetic algorithm where the fitness of a poem is determined by how similar it is the search term and the proportion of words that have the specified polarity. The best poem that is produced when running the genetic algorithm is saved to an output file and read aloud using text-to-speech.
+Quaint Poet is a system that generates cinquain poems that relate to a given prompt and polarity. Given a prompt, it uses the Guardian API to find articles related to that term and uses the one with highest proportion of text with the desired polarity (positive or negative) as the corpus of words for the poems. Each poem's line is generated according to bigrams and a template of Penn Treebank part-of-speech tags. The system uses a genetic algorithm where the fitness of a poem is determined by how similar it is the prompt and the proportion of words that have the specified polarity. The best poem that is produced when running the genetic algorithm is saved to an output file and read aloud using text-to-speech.
+
+As mentioned previously, the system evaluates poems with two metrics: their similarity to the given prompt and how well the polarity of the poem aligns with the one specified by the user. These are meant to indicate how well the poems fulfill the user's request. The similarity score is calculated by averaging the similarity between the prompt and each line in the poem using spaCy's similarity() function. The polarity score uses the VADER sentiment analyzer to get the proportion of words that have the specified polarity. This score is then multiplied by `POLARITY_WEIGHT`, a value between 0 and 1 which indicates the weight of the polarity score. Finally, this value is added to the similarity score to get the fitness of a poem. The value for `POLARITY_WEIGHT` can be increased/decreased to reflect how important the polarity score is relative to the similarity score.
 <br />
 <br />
 
@@ -9,10 +11,10 @@ Download the files in this repository and navigate to where they were saved. Not
 
 To generate a poem and have it be read aloud, navigate to where the files are located in the command prompt and run the following:
 
-`python3 poem_generator.py <search term> <polarity> <output file>`
+`python3 poem_generator.py <prompt> <polarity> <output file>`
 
 where:  
-* `search term` is a prompt for the topic of the poem and what will be used to find an article for the corpus
+* `prompt` is a prompt for the topic of the poem and what will be used to find an article for the corpus
 * `polarity` is equal to either `positive` or `negative` and indicates the desired polarity of the poem to be generated
 * `output file` is where the generated poem should be saved to
 
@@ -25,7 +27,7 @@ where `poem file` is the file containing the poem to be read.
 <br />
 
 ## Reflection
-I found coming up with an interesting but feasible idea was one of the most challenging parts of this project. I knew I wanted to incorporate user input in some way and generally wanted the poems that the sytem generates to make sense. I played around with multiple ideas before deciding on having templates for the part-of-speech tags for each line. Another aspect that challenged me was finding the correct tools/libraries to implement what I had planned. There are numerous resources for NLP, and some were more useful for this project than otheres. Specifically, I learned more about spaCy, part-of-speech tagging, and sentiment analysis while designing and implementing this system.
+I found coming up with an interesting but feasible idea was one of the most challenging parts of this project. I knew I wanted to incorporate user input in some way and generally wanted the poems that the sytem generates to make sense. I played around with multiple ideas before deciding on having templates for the part-of-speech tags for each line. Furthermore, I did not want to have an inspiring set of poems that the system is able to pull lines from from since I was worried the resulting poems would then be too similar to the actual ones. This led to one of the main aspects of the project including how to balance producing original poems while also having them generally make sense gramatically and semantically. Another aspect that challenged me was finding the correct tools/libraries to implement what I had planned. There are numerous resources for NLP, and some were more useful for this project than others. Specifically, I learned more about spaCy, part-of-speech tagging, and sentiment analysis while designing and implementing this system.
 <br />
 <br />
 
@@ -39,7 +41,7 @@ This paper inspired me to create a corpus-based poetry generation system. This a
 
 ### An evolutionary algorithm approach to poetry generation (Hisar Maruli Manurung)
 #### https://era.ed.ac.uk/bitstream/handle/1842/314/IP040022.pdf
-This paper describes McGonagall, a genetic algorithm used to generate poems. For McGonagall, an individual is represented as an LTAG derivation tree and uses operations to modify the trees while adhering to the grammar. While the approach that Quaint Poet uses for its genetic algorithm is very different from McGonogall's, this paper gave me the idea to have a "grammar" defined for each of the five lines in the poem so there would be fewer grammatical errors overall.
+This paper describes McGonagall, a genetic algorithm used to generate poems. For McGonagall, an individual is represented as an LTAG derivation tree and uses operations to modify the trees while adhering to the grammar. I referenced this paper while coming up with the implementation for the genetic algorithm that my system would use to generate poems. While the approach that Quaint Poet uses for its genetic algorithm is very different from McGonogall's, this paper gave me the idea to have a "grammar" defined for each of the five lines in the poem so there would be fewer grammatical errors overall.
 <br />
 <br />
 

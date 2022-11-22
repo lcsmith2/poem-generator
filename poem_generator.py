@@ -36,16 +36,16 @@ def write_output(output_filename, poem):
     with open(output_filename, "w") as file:
         file.write(str(poem))
 
-def get_frequency_map(bigrams):
+def get_next_word_map(bigrams):
     """
-    Maps each word to a list of words that succeed it (frequency_map) and 
+    Maps each word to a list of words that succeed it (next_word_map) and 
     groups each word in bigrams according to its tag (tag_map). Returns 
-    frequency_map and tag_map.
+    next_word_map and tag_map.
     Args:
         bigrams (list(tuple(str, str))): a list of tuples that contain bigrams
         from the input text
     """
-    frequency_map = collections.defaultdict(set)
+    next_word_map = collections.defaultdict(set)
     tag_map = collections.defaultdict(set)
     for first, second in bigrams:
         first_text = first.text
@@ -54,15 +54,15 @@ def get_frequency_map(bigrams):
             first_text = first_text.lower()
         if second.pos_ != "PROPN":
             second_text = second_text.lower()
-        frequency_map[first_text].add(second)
+        next_word_map[first_text].add(second)
         tag_map[first.tag_].add(first_text)
         tag_map[second.tag_].add(second_text)
 
-    for key, value in frequency_map.items():
-        frequency_map[key] = list(value)
+    for key, value in next_word_map.items():
+        next_word_map[key] = list(value)
     for key, value in tag_map.items():
         tag_map[key] = list(value)
-    return frequency_map, tag_map
+    return next_word_map, tag_map
 
 def speak_poem(filename):
     """
@@ -95,9 +95,9 @@ def generate_poem(search_term, polarity, output_filename):
     doc = nlp(input)
     bigrams = textacy.extract.ngrams(doc, n=2, filter_stops=False, 
         filter_punct=True, filter_nums=True)
-    frequency_map, tag_map = get_frequency_map(bigrams)
+    next_word_map, tag_map = get_next_word_map(bigrams)
     Poem.nlp = nlp
-    Poem.frequency_map = frequency_map
+    Poem.next_word_map = next_word_map
     Poem.tag_map = tag_map
     Poem.search_term_doc = nlp(search_term)
     Poem.polarity = polarity
@@ -119,15 +119,15 @@ def main():
             print(f"Could not find file {poem_file}")
             return
     elif len(sys.argv) == 4:
-        search_term, polarity, output_filename = sys.argv[1:]
+        prompt, polarity, output_filename = sys.argv[1:]
         if polarity not in POLARITY_MAP:
             print(f"Polarity must be one of the following: {POLARITY_MAP.keys()}")
             return
         polarity = POLARITY_MAP[polarity]
-        generate_poem(search_term, polarity, output_filename)
+        generate_poem(prompt, polarity, output_filename)
         speak_poem(output_filename) 
     else:
-        print("Usage: python3 poem_generator.py <search term> <polarity>" \
+        print("Usage: python3 poem_generator.py <prompt> <polarity>" \
             " <output filename>")
 
 
