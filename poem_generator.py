@@ -1,6 +1,12 @@
 """
+Author: Lily Smith
+Course: CSCI 3725
+Assignment: M6
+11/21/22
+
 This module contains the main method for running the program to generate and
-speak a cinquain poem.
+speak a cinquain poem. The program takes a search term and polarity as prompts
+for generating the poem. 
 """
 import collections
 import spacy
@@ -63,7 +69,7 @@ def speak_poem(filename):
     Uses text-to-speech to "speak" the poem from the specified filename.
     Args:
         filename (str): the name of the file containing the poem to be 
-        performed
+            performed
     """
     if not filename.endswith(".txt"):
         filename += ".txt"
@@ -79,11 +85,11 @@ def generate_poem(search_term, polarity, output_filename):
     the corpus.
     Args:
         search_term (str): the search term that candidate articles should 
-        contain
+            contain
         polarity (str): indicates whether the generated poem should have a
-        positive or negative polarity
+            positive or negative polarity
         output_filename (str): the name of the file to write the generated
-        poem to
+            poem to
     """
     input = article.get_article_for_term(search_term, polarity)
     doc = nlp(input)

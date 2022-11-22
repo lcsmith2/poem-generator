@@ -1,8 +1,12 @@
 """
+Author: Lily Smith
+Course: CSCI 3725
+Assignment: M6
+11/21/22
+
 This module uses the Guardian API to find an article relating to a given 
 search term with a positive or negative polarity.
 """
-
 from api_keys import GUARDIAN_API_KEY
 import requests
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
